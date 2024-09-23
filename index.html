@@ -294,6 +294,53 @@
     document.getElementById('rightButton').addEventListener('mouseup', function() {
         rightPressed = false;
     });
+
+    // Button controls for mobile (touchscreen)
+document.getElementById('leftButton').addEventListener('mousedown', function() {
+    leftPressed = true;
+});
+document.getElementById('leftButton').addEventListener('mouseup', function() {
+    leftPressed = false;
+});
+document.getElementById('rightButton').addEventListener('mousedown', function() {
+    rightPressed = true;
+});
+document.getElementById('rightButton').addEventListener('mouseup', function() {
+    rightPressed = false;
+});
+
+// Touch events for mobile devices
+document.getElementById('leftButton').addEventListener('touchstart', function() {
+    leftPressed = true;
+});
+document.getElementById('leftButton').addEventListener('touchend', function() {
+    leftPressed = false;
+});
+document.getElementById('rightButton').addEventListener('touchstart', function() {
+    rightPressed = true;
+});
+document.getElementById('rightButton').addEventListener('touchend', function() {
+    rightPressed = false;
+});
+
+
+document.getElementById('leftButton').addEventListener('touchstart', function(event) {
+    leftPressed = true;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('leftButton').addEventListener('touchend', function(event) {
+    leftPressed = false;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('rightButton').addEventListener('touchstart', function(event) {
+    rightPressed = true;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('rightButton').addEventListener('touchend', function(event) {
+    rightPressed = false;
+    event.preventDefault();  // Prevent scrolling
+});
+
 </script>
 
 </body>
