@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaceship Fitter</title>
+    <title>Spaceship Fitter Game</title>
     <style>
         body {
             margin: 0;
@@ -15,6 +15,7 @@
             height: 100vh;
             background-color: #000;
             position: relative;
+            font-family: Arial, sans-serif;
         }
         canvas {
             background: #111;
@@ -52,13 +53,19 @@
         #refreshButton {
             position: absolute;
             color: white;
-            background-color: #00ff00;
-            border: none;
-            padding: 1vw 2vw;
+            background-color: #ff5722; /* New background color */
+            border: 2px solid #ffffff; /* White border */
+            padding: 10px 20px; /* Padding */
             font-size: 2vw;
             cursor: pointer;
             display: none;
             bottom: 20px;
+            z-index: 10; /* Ensure it's above other elements */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s; /* Smooth background color change */
+        }
+        #refreshButton:hover {
+            background-color: #e64a19; /* Darker shade on hover */
         }
         footer {
             position: absolute;
@@ -66,6 +73,28 @@
             color: white;
             font-size: 2vw;
             text-align: center;
+        }
+        .control {
+            position: absolute;
+            bottom: 80px; /* Adjust position for buttons */
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .btn {
+            background-color: #00ff00; /* Button background color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Padding inside button */
+            font-size: 3vw; /* Font size */
+            color: white; /* Text color */
+            cursor: pointer; /* Pointer cursor on hover */
+            flex: 1; /* Flex property */
+            margin: 0 5px; /* Margin between buttons */
+            box-shadow: none; /* Ensure no shadow */
+            outline: none; /* Remove focus outline */
+            transition: none; /* Disable transition effects */
+            background: transparent !important; /* Reset background */
         }
     </style>
 </head>
@@ -76,6 +105,10 @@
 <div id="notice">Game will be over for three missing enemies.</div>
 <div id="gameOver">GAME OVER<br>Reload to play again</div>
 <button id="refreshButton">Refresh Game</button>
+<div class="control">
+    <button class="btn" id="leftButton">⬅️</button>
+    <button class="btn" id="rightButton">➡️</button>
+</div>
 <footer>Spaceship Fitter</footer>
 
 <script>
@@ -234,11 +267,16 @@
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
 
-    // Refresh game
+    // Touch controls
+    document.getElementById('leftButton').addEventListener('touchstart', () => leftPressed = true);
+    document.getElementById('leftButton').addEventListener('touchend', () => leftPressed = false);
+    document.getElementById('rightButton').addEventListener('touchstart', () => rightPressed = true);
+    document.getElementById('rightButton').addEventListener('touchend', () => rightPressed = false);
+
+    // Refresh button event listener
     refreshButton.addEventListener('click', () => {
-        location.reload();
+        location.reload(); // Reload the page to restart the game
     });
 </script>
-
 </body>
 </html>
