@@ -28,7 +28,7 @@
         }
         #score {
             color: white;
-            font-size: 3vw;
+            font-size: 3vw;  /* Smaller font for smart look */
             position: absolute;
             top: 5px;
             left: 50%;
@@ -37,13 +37,13 @@
         }
         #notice {
             color: yellow;
-            font-size: 2.5vw;
+            font-size: 2.5vw;  /* Slightly smaller for better fit */
             position: absolute;
             top: 40px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
-            max-width: 80vw;
+            max-width: 80vw;  /* Constrain text width on small screens */
         }
         #gameOver {
             color: red;
@@ -74,11 +74,11 @@
         }
         .control {
             position: absolute;
-            bottom: 5vh;
+            bottom: 5vh;  /* Push buttons higher for smart appearance */
             display: flex;
             justify-content: space-between;
             width: 80vw;
-            max-width: 400px;
+            max-width: 400px; /* Limit max-width for better desktop fit */
         }
         .btn {
             background-color: transparent;
@@ -108,7 +108,7 @@
 
 <canvas id="spaceShooter"></canvas>
 <div id="score">Score: 0</div>
-<div id="notice">Game will be over for three missed enemies.</div>
+<div id="notice">Game will be over for two missed enemies.</div>
 <div id="gameOver">GAME OVER<br>Reload to play again</div>
 <button id="refreshButton">Refresh Game</button>
 <div class="control">
@@ -130,25 +130,25 @@
         canvas.width = window.innerWidth * 0.9;  // Canvas width set to 90% of window width
         canvas.height = window.innerHeight * 0.7; // Canvas height set to 70% of window height
     }
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);  // Adjust canvas on window resize
     resizeCanvas();  // Initial canvas size setup
 
     // Game Variables
-    let spaceshipWidth = canvas.width * 0.1;  // Spaceship size relative to canvas width
-    let spaceshipHeight = canvas.height * 0.1;
+    let spaceshipWidth = 50;
+    let spaceshipHeight = 50;
     let spaceshipX = (canvas.width - spaceshipWidth) / 2;
     let spaceshipY = canvas.height - spaceshipHeight - 10;
-    let spaceshipSpeed = canvas.width * 0.03; // Speed relative to canvas size
+    let spaceshipSpeed = 20;
 
-    let enemyWidth = canvas.width * 0.1;  // Enemy size relative to canvas width
-    let enemyHeight = canvas.height * 0.1;
+    let enemyWidth = 50;
+    let enemyHeight = 50;
     let enemies = [];
-    let enemySpeed = canvas.height * 0.01; // Enemy speed relative to canvas height
+    let enemySpeed = 3;
     let enemySpawnInterval = 1500;
 
     let score = 0;
     let missedEnemies = 0;
-    const maxMissedEnemies = 3;
+    const maxMissedEnemies = 2;
     let isGameOver = false;
 
     // Key control flags
@@ -191,7 +191,7 @@
     function drawSpark(x, y) {
         ctx.fillStyle = 'yellow';
         ctx.beginPath();
-        ctx.arc(x, y, canvas.width * 0.02, 0, Math.PI * 2);
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
         ctx.fill();
     }
 
@@ -207,17 +207,17 @@
                 spaceshipY < enemy.y + enemyHeight &&
                 spaceshipY + spaceshipHeight > enemy.y
             ) {
-                drawSpark(enemy.x + enemyWidth / 2, enemy.y + enemyHeight / 2);
-                score += 5;
-                scoreDisplay.innerText = 'Score: ' + score;
-                enemies.splice(i, 1);
-                i--;
+                drawSpark(enemy.x + enemyWidth / 2, enemy.y + enemyHeight / 2); // Draw spark
+                score += 5; // Increase score by 5
+                scoreDisplay.innerText = 'Score: ' + score; // Update score
+                enemies.splice(i, 1); // Remove the enemy that was hit
+                i--; // Adjust index to account for removed enemy
             }
 
             // Check if enemy reaches the bottom (missed)
             if (enemy.y + enemyHeight >= canvas.height) {
                 missedEnemies++;
-                enemies.splice(i, 1);
+                enemies.splice(i, 1); // Remove the missed enemy
                 i--;
 
                 if (missedEnemies >= maxMissedEnemies) {
@@ -271,35 +271,77 @@
         }
     }
 
-    // Game reset
-    function resetGame() {
-        score = 0;
-        missedEnemies = 0;
-        isGameOver = false;
-        enemies = [];
-        spaceshipX = (canvas.width - spaceshipWidth) / 2;
-        scoreDisplay.innerText = 'Score: 0';
-        gameOverDisplay.style.display = 'none';
-        refreshButton.style.display = 'none';
-    }
-
-    // Event listeners for keys
-    document.addEventListener('keydown', keyDownHandler);
-    document.addEventListener('keyup', keyUpHandler);
-
-    // Event listeners for on-screen buttons
-    document.getElementById('leftButton').addEventListener('mousedown', () => leftPressed = true);
-    document.getElementById('leftButton').addEventListener('mouseup', () => leftPressed = false);
-    document.getElementById('rightButton').addEventListener('mousedown', () => rightPressed = true);
-    document.getElementById('rightButton').addEventListener('mouseup', () => rightPressed = false);
-
-    // Restart button
-    refreshButton.addEventListener('click', resetGame);
-
-    // Start game loop and enemy spawn
-    setInterval(gameLoop, 30);
+    setInterval(gameLoop, 20);
     setInterval(spawnEnemy, enemySpawnInterval);
 
+    // Event listeners
+    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener('keyup', keyUpHandler);
+    refreshButton.addEventListener('click', function() {
+        window.location.reload();
+    });
+
+    // Button controls for mobile
+    document.getElementById('leftButton').addEventListener('mousedown', function() {
+        leftPressed = true;
+    });
+    document.getElementById('leftButton').addEventListener('mouseup', function() {
+        leftPressed = false;
+    });
+    document.getElementById('rightButton').addEventListener('mousedown', function() {
+        rightPressed = true;
+    });
+    document.getElementById('rightButton').addEventListener('mouseup', function() {
+        rightPressed = false;
+    });
+
+    // Button controls for mobile (touchscreen)
+document.getElementById('leftButton').addEventListener('mousedown', function() {
+    leftPressed = true;
+});
+document.getElementById('leftButton').addEventListener('mouseup', function() {
+    leftPressed = false;
+});
+document.getElementById('rightButton').addEventListener('mousedown', function() {
+    rightPressed = true;
+});
+document.getElementById('rightButton').addEventListener('mouseup', function() {
+    rightPressed = false;
+});
+
+// Touch events for mobile devices
+document.getElementById('leftButton').addEventListener('touchstart', function() {
+    leftPressed = true;
+});
+document.getElementById('leftButton').addEventListener('touchend', function() {
+    leftPressed = false;
+});
+document.getElementById('rightButton').addEventListener('touchstart', function() {
+    rightPressed = true;
+});
+document.getElementById('rightButton').addEventListener('touchend', function() {
+    rightPressed = false;
+});
+
+
+document.getElementById('leftButton').addEventListener('touchstart', function(event) {
+    leftPressed = true;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('leftButton').addEventListener('touchend', function(event) {
+    leftPressed = false;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('rightButton').addEventListener('touchstart', function(event) {
+    rightPressed = true;
+    event.preventDefault();  // Prevent scrolling
+});
+document.getElementById('rightButton').addEventListener('touchend', function(event) {
+    rightPressed = false;
+    event.preventDefault();  // Prevent scrolling
+});
+
 </script>
+
 </body>
-</html>
+</html>         
