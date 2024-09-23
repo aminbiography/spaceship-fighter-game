@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaceship Fitter</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            position: relative;
+        }
+        canvas {
+            background: #111;
+            display: block;
+            border: 2px solid #00ff00;
+            max-width: 100%;
+            max-height: 80vh;
+        }
+        #score {
+            position: absolute;
+            color: white;
+            font-size: 2vw;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #notice {
+            position: absolute;
+            color: yellow;
+            font-size: 1.5vw;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        #gameOver {
+            position: absolute;
+            color: red;
+            font-size: 5vw;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        #refreshButton {
+            position: absolute;
+            color: white;
+            background-color: #00ff00;
+            border: none;
+            padding: 1vw 2vw;
+            font-size: 2vw;
+            cursor: pointer;
+            display: none;
+            bottom: 20px;
+        }
+        footer {
+            position: absolute;
+            bottom: 10px;
+            color: white;
+            font-size: 2vw;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="spaceShooter" width="800" height="600"></canvas>
+<div id="score">Score: 0</div>
+<div id="notice">Game will be over for three missing enemies.</div>
+<div id="gameOver">GAME OVER<br>Reload to play again</div>
+<button id="refreshButton">Refresh Game</button>
+<footer>Spaceship Fitter</footer>
+
+<script>
+    const canvas = document.getElementById('spaceShooter');
+    const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('score');
+    const noticeDisplay = document.getElementById('notice');
+    const gameOverDisplay = document.getElementById('gameOver');
+    const refreshButton = document.getElementById('refreshButton');
+
+    // Game Variables
+    let spaceshipWidth = 60;
+    let spaceshipHeight = 40;
+    let spaceshipX = (canvas.width - spaceshipWidth) / 2;
+    let spaceshipY = canvas.height - spaceshipHeight - 10;
+    let spaceshipSpeed = 5;
+
+    let enemyWidth = 50;
+    let enemyHeight = 50;
+    let enemies = [];
+    let enemySpeed = 2;
+    let enemySpawnInterval = 1500;
+
+    let score = 0;
+    let missedEnemies = 0;
+    const maxMissedEnemies = 3;
+    let isGameOver = false;
+
+    // Key control flags
+    let rightPressed = false;
+    let leftPressed = false;
+
+    // Enemy spawn
+    function spawnEnemy() {
+        const enemyX = Math.random() * (canvas.width - enemyWidth);
+        enemies.push({ x: enemyX, y: -enemyHeight });
+    }
+
+    // Handle movement and drawing spaceship
+    function drawSpaceship() {
+        ctx.fillStyle = '#0088ff';
+        ctx.beginPath();
+        ctx.moveTo(spaceshipX + spaceshipWidth / 2, spaceshipY);
+        ctx.lineTo(spaceshipX, spaceshipY + spaceshipHeight);
+        ctx.lineTo(spaceshipX + spaceshipWidth, spaceshipY + spaceshipHeight);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // Handle enemy movement and drawing
+    function drawEnemies() {
+        enemies = enemies.filter(e => e.y < canvas.height);
+        for (let enemy of enemies) {
+            enemy.y += enemySpeed;
+            ctx.fillStyle = '#808080'; // Gray color for enemies
+            ctx.beginPath();
+            ctx.moveTo(enemy.x + enemyWidth / 2, enemy.y); // Top point of triangle
+            ctx.lineTo(enemy.x, enemy.y + enemyHeight); // Bottom left point
+            ctx.lineTo(enemy.x + enemyWidth, enemy.y + enemyHeight); // Bottom right point
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    // Spark effect
+    function drawSpark(x, y) {
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Collision detection
+    function detectCollisions() {
+        for (let i = 0; i < enemies.length; i++) {
+            const enemy = enemies[i];
+
+            // Check if spaceship hits an enemy
+            if (
+                spaceshipX < enemy.x + enemyWidth &&
+                spaceshipX + spaceshipWidth > enemy.x &&
+                spaceshipY < enemy.y + enemyHeight &&
+                spaceshipY + spaceshipHeight > enemy.y
+            ) {
+                drawSpark(enemy.x + enemyWidth / 2, enemy.y + enemyHeight / 2); // Draw spark
+                score += 5; // Increase score by 5
+                scoreDisplay.innerText = 'Score: ' + score; // Update score
+                enemies.splice(i, 1); // Remove the enemy that was hit
+                i--; // Adjust index to account for removed enemy
+            }
+
+            // Check if enemy reaches the bottom (missed)
+            if (enemy.y + enemyHeight >= canvas.height) {
+                missedEnemies++;
+                enemies.splice(i, 1); // Remove the missed enemy
+                i--;
+
+                if (missedEnemies >= maxMissedEnemies) {
+                    isGameOver = true;
+                }
+            }
+        }
+    }
+
+    // Draw game over message
+    function drawGameOver() {
+        gameOverDisplay.style.display = 'block';
+        refreshButton.style.display = 'block';
+    }
+
+    // Key down handler
+    function keyDownHandler(e) {
+        if (e.key === 'ArrowRight') {
+            rightPressed = true;
+        } else if (e.key === 'ArrowLeft') {
+            leftPressed = true;
+        }
+    }
+
+    // Key up handler
+    function keyUpHandler(e) {
+        if (e.key === 'ArrowRight') {
+            rightPressed = false;
+        } else if (e.key === 'ArrowLeft') {
+            leftPressed = false;
+        }
+    }
+
+    // Main game loop
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (!isGameOver) {
+            drawSpaceship();
+            drawEnemies();
+            detectCollisions();
+        } else {
+            drawGameOver();
+        }
+
+        if (rightPressed && spaceshipX < canvas.width - spaceshipWidth) {
+            spaceshipX += spaceshipSpeed;
+        }
+        if (leftPressed && spaceshipX > 0) {
+            spaceshipX -= spaceshipSpeed;
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Start game loop and spawn enemies
+    setInterval(spawnEnemy, enemySpawnInterval);
+    gameLoop();
+
+    // Event listeners for controls
+    document.addEventListener('keydown', keyDownHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
+
+    // Refresh game
+    refreshButton.addEventListener('click', () => {
+        location.reload();
+    });
+</script>
+
+</body>
+</html>
