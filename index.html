@@ -22,21 +22,21 @@
             display: block;
             border: 2px solid #00ff00;
             max-width: 100%;
-            max-height: 80vh;
+            height: 80vh; /* Adjust to take 80% of the viewport height */
         }
         #score {
             position: absolute;
             color: white;
-            font-size: 2vw;
-            top: 10px;
+            font-size: 4vw; /* Use viewport units for scalability */
+            top: 5px;
             left: 50%;
             transform: translateX(-50%);
         }
         #notice {
             position: absolute;
             color: yellow;
-            font-size: 1.5vw;
-            top: 40px;
+            font-size: 3vw; /* Viewport units for mobile responsiveness */
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -44,7 +44,7 @@
         #gameOver {
             position: absolute;
             color: red;
-            font-size: 5vw;
+            font-size: 8vw; /* Larger font for mobile */
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -53,56 +53,56 @@
         #refreshButton {
             position: absolute;
             color: white;
-            background-color: #ff5722; /* New background color */
-            border: 2px solid #ffffff; /* White border */
-            padding: 10px 20px; /* Padding */
-            font-size: 2vw;
+            background-color: #ff5722;
+            border: 2px solid #ffffff;
+            padding: 10px 20px;
+            font-size: 5vw; /* Increased font size for better touch interaction */
             cursor: pointer;
             display: none;
-            bottom: 20px;
-            z-index: 10; /* Ensure it's above other elements */
-            border-radius: 5px; /* Rounded corners */
-            transition: background-color 0.3s; /* Smooth background color change */
+            bottom: 15px;
+            z-index: 10;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         #refreshButton:hover {
-            background-color: #e64a19; /* Darker shade on hover */
+            background-color: #e64a19;
         }
         footer {
             position: absolute;
-            bottom: 10px;
+            bottom: 5px;
             color: white;
-            font-size: 2vw;
+            font-size: 3vw;
             text-align: center;
         }
         .control {
             position: absolute;
-            bottom: 80px; /* Adjust position for buttons */
+            bottom: 60px; /* Adjust position for buttons */
             display: flex;
             justify-content: space-between;
-            width: 100%;
+            width: 90%;
             padding: 0 20px;
         }
         .btn {
-            background-color: #00ff00; /* Button background color */
-            border: none; /* Remove border */
-            padding: 10px 20px; /* Padding inside button */
-            font-size: 3vw; /* Font size */
-            color: white; /* Text color */
-            cursor: pointer; /* Pointer cursor on hover */
-            flex: 1; /* Flex property */
-            margin: 0 5px; /* Margin between buttons */
-            box-shadow: none; /* Ensure no shadow */
-            outline: none; /* Remove focus outline */
-            transition: none; /* Disable transition effects */
-            background: transparent !important; /* Reset background */
+            background-color: transparent; /* Transparent background */
+            border: 2px solid #00ff00; /* Button border for better visibility */
+            padding: 15px;
+            font-size: 8vw; /* Larger font size for better touch */
+            color: white;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: rgba(0, 255, 0, 0.3); /* Highlight on hover */
         }
     </style>
 </head>
 <body>
 
-<canvas id="spaceShooter" width="800" height="600"></canvas>
+<canvas id="spaceShooter"></canvas>
 <div id="score">Score: 0</div>
-<div id="notice">Game will be over for three missing enemies.</div>
+<div id="notice">Game will be over for three missed enemies.</div>
 <div id="gameOver">GAME OVER<br>Reload to play again</div>
 <button id="refreshButton">Refresh Game</button>
 <div class="control">
@@ -118,6 +118,14 @@
     const noticeDisplay = document.getElementById('notice');
     const gameOverDisplay = document.getElementById('gameOver');
     const refreshButton = document.getElementById('refreshButton');
+
+    // Adjust canvas size for mobile responsiveness
+    function resizeCanvas() {
+        canvas.width = window.innerWidth * 0.95;  // Canvas width set to 95% of window width
+        canvas.height = window.innerHeight * 0.8; // Canvas height set to 80% of window height
+    }
+    window.addEventListener('resize', resizeCanvas);  // Adjust canvas on window resize
+    resizeCanvas();  // Initial canvas size setup
 
     // Game Variables
     let spaceshipWidth = 60;
@@ -165,9 +173,9 @@
             enemy.y += enemySpeed;
             ctx.fillStyle = '#808080'; // Gray color for enemies
             ctx.beginPath();
-            ctx.moveTo(enemy.x + enemyWidth / 2, enemy.y); // Top point of triangle
-            ctx.lineTo(enemy.x, enemy.y + enemyHeight); // Bottom left point
-            ctx.lineTo(enemy.x + enemyWidth, enemy.y + enemyHeight); // Bottom right point
+            ctx.moveTo(enemy.x + enemyWidth / 2, enemy.y);
+            ctx.lineTo(enemy.x, enemy.y + enemyHeight);
+            ctx.lineTo(enemy.x + enemyWidth, enemy.y + enemyHeight);
             ctx.closePath();
             ctx.fill();
         }
@@ -259,24 +267,19 @@
         requestAnimationFrame(gameLoop);
     }
 
-    // Start game loop and spawn enemies
+    // Event listeners for controls
+    window.addEventListener('keydown', keyDownHandler);
+    window.addEventListener('keyup', keyUpHandler);
+    document.getElementById('rightButton').addEventListener('touchstart', () => { rightPressed = true; });
+    document.getElementById('rightButton').addEventListener('touchend', () => { rightPressed = false; });
+    document.getElementById('leftButton').addEventListener('touchstart', () => { leftPressed = true; });
+    document.getElementById('leftButton').addEventListener('touchend', () => { leftPressed = false; });
+    refreshButton.addEventListener('click', () => location.reload());
+
+    // Start game
     setInterval(spawnEnemy, enemySpawnInterval);
     gameLoop();
-
-    // Event listeners for controls
-    document.addEventListener('keydown', keyDownHandler, false);
-    document.addEventListener('keyup', keyUpHandler, false);
-
-    // Touch controls
-    document.getElementById('leftButton').addEventListener('touchstart', () => leftPressed = true);
-    document.getElementById('leftButton').addEventListener('touchend', () => leftPressed = false);
-    document.getElementById('rightButton').addEventListener('touchstart', () => rightPressed = true);
-    document.getElementById('rightButton').addEventListener('touchend', () => rightPressed = false);
-
-    // Refresh button event listener
-    refreshButton.addEventListener('click', () => {
-        location.reload(); // Reload the page to restart the game
-    });
 </script>
+
 </body>
 </html>
