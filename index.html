@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaceship Fitter Game</title>
+    <title>Spaceship Fighter Game</title>
     <style>
         body {
             margin: 0;
@@ -115,7 +115,7 @@
     <button class="btn" id="leftButton">⬅️</button>
     <button class="btn" id="rightButton">➡️</button>
 </div>
-<footer>Spaceship Fitter</footer>
+<footer>Spaceship Fighter Game</footer>
 
 <script>
     const canvas = document.getElementById('spaceShooter');
@@ -134,8 +134,8 @@
     resizeCanvas();  // Initial canvas size setup
 
     // Game Variables
-    let spaceshipWidth = 75;
-    let spaceshipHeight = 75;
+    let spaceshipWidth = 50;
+    let spaceshipHeight = 50;
     let spaceshipX = (canvas.width - spaceshipWidth) / 2;
     let spaceshipY = canvas.height - spaceshipHeight - 10;
     let spaceshipSpeed = 5;
@@ -177,7 +177,7 @@
         enemies = enemies.filter(e => e.y < canvas.height);
         for (let enemy of enemies) {
             enemy.y += enemySpeed;
-            ctx.fillStyle = '#808080'; // Gray color for enemies
+            ctx.fillStyle = '#808080'; // Color for enemies
             ctx.beginPath();
             ctx.moveTo(enemy.x + enemyWidth / 2, enemy.y);
             ctx.lineTo(enemy.x, enemy.y + enemyHeight);
