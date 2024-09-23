@@ -14,87 +14,93 @@
             align-items: center;
             height: 100vh;
             background-color: #000;
-            position: relative;
             font-family: Arial, sans-serif;
+            overflow: hidden;
         }
         canvas {
             background: #111;
             display: block;
             border: 2px solid #00ff00;
-            max-width: 100%;
-            height: 80vh; /* Adjust to take 80% of the viewport height */
+            width: 90vw;  /* Responsive width */
+            height: 70vh;  /* Adjust height for better space on mobile */
+            max-width: 600px; /* Limit width for larger screens */
+            max-height: 450px;
         }
         #score {
-            position: absolute;
             color: white;
-            font-size: 4vw; /* Use viewport units for scalability */
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        #notice {
+            font-size: 3vw;  /* Smaller font for smart look */
             position: absolute;
-            color: yellow;
-            font-size: 3vw; /* Viewport units for mobile responsiveness */
-            top: 10px;
+            top: 5px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
         }
-        #gameOver {
+        #notice {
+            color: yellow;
+            font-size: 2.5vw;  /* Slightly smaller for better fit */
             position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            max-width: 80vw;  /* Constrain text width on small screens */
+        }
+        #gameOver {
             color: red;
-            font-size: 8vw; /* Larger font for mobile */
+            font-size: 6vw;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: none;
+            text-align: center;
         }
         #refreshButton {
-            position: absolute;
             color: white;
             background-color: #ff5722;
             border: 2px solid #ffffff;
             padding: 10px 20px;
-            font-size: 5vw; /* Increased font size for better touch interaction */
+            font-size: 4vw;
             cursor: pointer;
             display: none;
             bottom: 15px;
             z-index: 10;
             border-radius: 5px;
             transition: background-color 0.3s;
+            position: absolute;
         }
         #refreshButton:hover {
             background-color: #e64a19;
         }
-        footer {
-            position: absolute;
-            bottom: 5px;
-            color: white;
-            font-size: 3vw;
-            text-align: center;
-        }
         .control {
             position: absolute;
-            bottom: 60px; /* Adjust position for buttons */
+            bottom: 5vh;  /* Push buttons higher for smart appearance */
             display: flex;
             justify-content: space-between;
-            width: 90%;
-            padding: 0 20px;
+            width: 80vw;
+            max-width: 400px; /* Limit max-width for better desktop fit */
         }
         .btn {
-            background-color: transparent; /* Transparent background */
-            border: 2px solid #00ff00; /* Button border for better visibility */
-            padding: 15px;
-            font-size: 8vw; /* Larger font size for better touch */
+            background-color: transparent;
+            border: 2px solid #00ff00;
+            padding: 10px;
+            font-size: 6vw;
             color: white;
             cursor: pointer;
             flex: 1;
             margin: 0 5px;
             border-radius: 5px;
+            transition: background-color 0.3s;
         }
         .btn:hover {
-            background-color: rgba(0, 255, 0, 0.3); /* Highlight on hover */
+            background-color: rgba(0, 255, 0, 0.2);
+        }
+        footer {
+            position: absolute;
+            bottom: 2vh;
+            color: white;
+            font-size: 2.5vw;
+            text-align: center;
         }
     </style>
 </head>
@@ -121,20 +127,20 @@
 
     // Adjust canvas size for mobile responsiveness
     function resizeCanvas() {
-        canvas.width = window.innerWidth * 0.95;  // Canvas width set to 95% of window width
-        canvas.height = window.innerHeight * 0.8; // Canvas height set to 80% of window height
+        canvas.width = window.innerWidth * 0.9;  // Canvas width set to 90% of window width
+        canvas.height = window.innerHeight * 0.7; // Canvas height set to 70% of window height
     }
     window.addEventListener('resize', resizeCanvas);  // Adjust canvas on window resize
     resizeCanvas();  // Initial canvas size setup
 
     // Game Variables
-    let spaceshipWidth = 60;
-    let spaceshipHeight = 40;
+    let spaceshipWidth = 150;
+    let spaceshipHeight = 100;
     let spaceshipX = (canvas.width - spaceshipWidth) / 2;
     let spaceshipY = canvas.height - spaceshipHeight - 10;
     let spaceshipSpeed = 5;
 
-    let enemyWidth = 50;
+    let enemyWidth = 100;
     let enemyHeight = 50;
     let enemies = [];
     let enemySpeed = 2;
@@ -263,23 +269,32 @@
         if (leftPressed && spaceshipX > 0) {
             spaceshipX -= spaceshipSpeed;
         }
-
-        requestAnimationFrame(gameLoop);
     }
 
-    // Event listeners for controls
-    window.addEventListener('keydown', keyDownHandler);
-    window.addEventListener('keyup', keyUpHandler);
-    document.getElementById('rightButton').addEventListener('touchstart', () => { rightPressed = true; });
-    document.getElementById('rightButton').addEventListener('touchend', () => { rightPressed = false; });
-    document.getElementById('leftButton').addEventListener('touchstart', () => { leftPressed = true; });
-    document.getElementById('leftButton').addEventListener('touchend', () => { leftPressed = false; });
-    refreshButton.addEventListener('click', () => location.reload());
-
-    // Start game
+    setInterval(gameLoop, 20);
     setInterval(spawnEnemy, enemySpawnInterval);
-    gameLoop();
+
+    // Event listeners
+    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener('keyup', keyUpHandler);
+    refreshButton.addEventListener('click', function() {
+        window.location.reload();
+    });
+
+    // Button controls for mobile
+    document.getElementById('leftButton').addEventListener('mousedown', function() {
+        leftPressed = true;
+    });
+    document.getElementById('leftButton').addEventListener('mouseup', function() {
+        leftPressed = false;
+    });
+    document.getElementById('rightButton').addEventListener('mousedown', function() {
+        rightPressed = true;
+    });
+    document.getElementById('rightButton').addEventListener('mouseup', function() {
+        rightPressed = false;
+    });
 </script>
 
 </body>
-</html>
+</html>         
